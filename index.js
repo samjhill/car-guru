@@ -23,12 +23,16 @@ app.get('/:make', (req, res) => {
       const rawPrice = $(".bidding-bid .bid-formatted", this).text()
       const price = rawPrice.replace('$', '').replace(',', '')
       const ending = $(this).attr('data-timestamp_end')
+      const imageURL = $(".thumbnail img", this).attr('src')
+      const listingID = $(this).attr('data-listing_id')
 
       listings.push({
         title,
         price,
         ending,
-        link
+        link,
+        imageURL,
+        listingID,
       })
     })
     if (listings.length > 0) res.json(listings)
@@ -53,12 +57,16 @@ app.get('/:make/:model', (req, res) => {
       const rawPrice = $(".bidding-bid .bid-formatted", this).text()
       const price = rawPrice.replace('$', '').replace(',', '')
       const ending = $(this).attr('data-timestamp_end')
+      const imageURL = $(".thumbnail img", this).attr('src')
+      const listingID = $(this).attr('data-listing_id')
 
       listings.push({
         title,
         price,
         ending,
-        link
+        link,
+        imageURL,
+        listingID,
       })
     })
     if (listings.length > 0) res.json(listings)
