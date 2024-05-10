@@ -8,8 +8,6 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-
-
 function cleanText(text) {
     // Remove special characters and excess whitespace
     const cleanedText = text.replace(/[\n\t]/g, ' ').replace(/\s{2,}/g, ' ').trim();
@@ -22,7 +20,15 @@ async function fetchListingTextContent(listingLink) {
         const response = await axios.get(listingLink);
         const html = response.data;
         const $ = cheerio.load(html);
-        let textContent = $('.post-excerpt').text().replace(/[\t\n]/g, '').trim(); // Update selector to target the item-excerpt class
+        let textContent = $('.post-excerpt').text().replace(/[\t\n]/g, '').trim();
+        textContent += "\n Comments: \n";
+
+        commentsScript = $('#bat-theme-viewmodels-js-extra').text().replace("var BAT_VMS =", "").replace(/;/g, "")
+        comments = JSON.parse(commentsScript)["comments"]
+        for (item in comments) {
+            comment = comments[item]
+            textContent += comment["content"] + "\n"
+        }
         return textContent;
     } catch (error) {
         console.error('Error fetching listing text content:', error);
@@ -54,7 +60,7 @@ axios.get('http://localhost:8000/mazda')
         const listingsTextContent = await fetchListingsTextContent(listings);
         // Query ChatGPT for each listing's text content and current price
         for (const listing of listingsTextContent) {
-            const prompt = `Roleplay as an expert in Mazda vehicles. Given the following information:\n\n${listing.textContent}\n\nCurrent price: ${listing.currentPrice}\n\nIs this a good deal? What should the buyer look out for? And what is a good maximum bid for this vehicle?`;
+            const prompt = `Imagine you're a seasoned expert specializing in Mazda vehicles. Review the provided details: the current price of a Mazda model. Evaluate if it's a worthwhile deal, advise on key factors for the buyer to consider, suggest a reasonable maximum bid, and provide a concise summary of the comments section's insights. Given the following information: listing text content: \n\n${listing.textContent}\n\n Current price: ${listing.currentPrice}\n\n`;
             const gptResponse = await queryChatGPT(prompt);
             if (gptResponse) {
                 console.log(`Listing: ${listing.title}`);
