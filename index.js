@@ -2,19 +2,8 @@ const PORT = process.env.PORT || 8000
 const express = require('express')
 const axios = require('axios')
 const cheerio = require('cheerio')
-const { render } = require('express/lib/response')
-
-/*
-NOTE: if we want to scrape the DOM instead of the HTML:
-
-  const htmlparser2 = require('htmlparser2');
-  const dom = htmlparser2.parseDocument(document, options);
-
-  const $ = cheerio.load(dom);
-*/
 
 const app = express()
-
 
 app.get('/', (req, res) => {
   res.json('Welcome to the Bring a Trailer web scraper. Usage: \'/make\' or \'/make/model\'')
@@ -27,13 +16,13 @@ app.get('/:make', (req, res) => {
     const listings = [];
 
     const $ = cheerio.load(html)
-    $(".featured-listing-content").each(function () {
+    $(".listing-card").each(function () {
       
-      const title = $(".featured-listing-title-link", this).text()
-      const link = $(".featured-listing-title-link", this).attr('href')
-      const rawPrice = $(".featured-listing-meta-value", this).text()
-      const price = rawPrice.replace('$', '').replace(',', '').replace(',', '')
-      const ending = $("[data-featured_listing_ends]", this).attr('data-featured_listing_ends')
+      const title = $("h3 a", this).text()
+      const link = $("h3 a", this).attr('href')
+      const rawPrice = $(".bidding-bid .bid-formatted", this).text()
+      const price = rawPrice.replace('$', '').replace(',', '')
+      const ending = $(this).attr('data-timestamp_end')
 
       listings.push({
         title,
@@ -43,7 +32,7 @@ app.get('/:make', (req, res) => {
       })
     })
     if (listings.length > 0) res.json(listings)
-    else res.json(`no current \'${req.params.make}\' listings found`)
+    else res.json(`no current '${req.params.make}' listings found`)
   }).catch(err => res.json({
     error: `${req.params.make} not found`,
     status: "404"
@@ -53,19 +42,17 @@ app.get('/:make', (req, res) => {
 app.get('/:make/:model', (req, res) => {
   axios.get(`https://bringatrailer.com/${req.params.make}/${req.params.model}`)
   .then((resp) => {
-   
     const html = resp.data
     const listings = [];
 
     const $ = cheerio.load(html)
-    $(".featured-listing-content").each(function () {
+    $(".listing-card").each(function () {
       
-      const title = $(".featured-listing-title-link", this).text()
-      const link = $(".featured-listing-title-link", this).attr('href')
-
-      const rawPrice = $(".featured-listing-meta-value", this).text()
-      const price = rawPrice.replace('$', '').replace(',', '').replace(',', '')
-      const ending = $("[data-featured_listing_ends]", this).attr('data-featured_listing_ends')
+      const title = $("h3 a", this).text()
+      const link = $("h3 a", this).attr('href')
+      const rawPrice = $(".bidding-bid .bid-formatted", this).text()
+      const price = rawPrice.replace('$', '').replace(',', '')
+      const ending = $(this).attr('data-timestamp_end')
 
       listings.push({
         title,
@@ -75,7 +62,7 @@ app.get('/:make/:model', (req, res) => {
       })
     })
     if (listings.length > 0) res.json(listings)
-    else res.json(`no current \'${req.params.make} ${req.params.model}\' listings found`)
+    else res.json(`no current '${req.params.make} ${req.params.model}' listings found`)
   }).catch(err => res.json({
     error: `${req.params.make} ${req.params.model} not found`,
     status: "404"

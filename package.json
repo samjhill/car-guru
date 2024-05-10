@@ -9,9 +9,9 @@
   "author": "janek",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.26.0",
-    "cheerio": "^1.0.0-rc.10",
-    "express": "^4.17.3",
+    "axios": "^1.6.8",
+    "cheerio": "^1.0.0-rc.12",
+    "express": "^4.19.2",
     "nodemon": "^2.0.15"
   }
 }
