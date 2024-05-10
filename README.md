@@ -1,5 +1,5 @@
 # Bring-a-Scraper
-A NodeJS based web scraper API to collect current auction information from Bring-a-Trailer and analyze it using OpenAI to identify if a car is a good deal and important items to look out for.
+A NodeJS based web scraper API to collect current auction information from Bring-a-Trailer and analyze it using OpenAI to identify if a car is a good deal and raise important items to look out for.
 
 ## Sample Response
 
