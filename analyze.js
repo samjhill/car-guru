@@ -53,7 +53,7 @@ async function fetchListingsTextContent(listings) {
     return listingsTextContent;
 }
 
-const models = ["mazda/miata", "porsche/boxster"];
+const models = ["mazda/miata", "porsche/boxster", "chevrolet/camaro"];
 for (const item in models) {
     const model = models[item];
     axios.get(`http://localhost:8000/${model}`)
