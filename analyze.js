@@ -53,19 +53,22 @@ async function fetchListingsTextContent(listings) {
     return listingsTextContent;
 }
 
-// Example usage: hitting the endpoint, fetching text content of the listings, and querying ChatGPT
-axios.get('http://localhost:8000/mazda')
+const models = ["mazda/miata", "porsche/boxster"];
+for (const item in models) {
+    const model = models[item];
+    axios.get(`http://localhost:8000/${model}`)
     .then(async (response) => {
         const listings = response.data;
         const listingsTextContent = await fetchListingsTextContent(listings);
         // Query ChatGPT for each listing's text content and current price
         for (const listing of listingsTextContent) {
-            const prompt = `Imagine you're a seasoned expert specializing in Mazda vehicles. Review the provided details: the current price of a Mazda model. Evaluate if it's a worthwhile deal, advise on key factors for the buyer to consider, suggest a reasonable maximum bid, and provide a concise summary of the comments section's insights. Given the following information: listing text content: \n\n${listing.textContent}\n\n Current price: ${listing.currentPrice}\n\n`;
+            const brand = model.split('/')[0];
+            const prompt = `Imagine you're a seasoned expert specializing in ${brand} vehicles. Review the provided details: the current price of the given ${brand} model. Evaluate if it's a worthwhile deal, advise on key factors for the buyer to consider, suggest a reasonable maximum bid, and provide a concise summary of the comments section's insights. Given the following information: listing text content: \n\n${listing.textContent}\n\n Current price: ${listing.currentPrice}\n\n`;
             const gptResponse = await queryChatGPT(prompt);
             if (gptResponse) {
                 console.log(`Listing: ${listing.title}`);
-                console.log(`${listing.link}`);
-                console.log('ChatGPT Response:', gptResponse);
+                console.log(`${listing.link} \n`);
+                console.log(gptResponse);
                 console.log('------------------------------------------');
             }
             else {
@@ -76,6 +79,8 @@ axios.get('http://localhost:8000/mazda')
     .catch((error) => {
         console.error('Error fetching listings:', error);
     });
+}
+
 
 // Function to query OpenAI's ChatGPT API
 async function queryChatGPT(prompt) {
