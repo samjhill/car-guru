@@ -1,6 +1,6 @@
 # Car Guru
 
-A NodeJS based web scraper API to collect current auction information from Bring-a-Trailer and analyze it using OpenAI to identify if a car is a good deal and raise important items to look out for.
+Collects current auction information from Bring-a-Trailer and analyzes it using OpenAI to identify if a car is a good deal. It also raises important items to look out for.
 
 ## Sample Response
 
