@@ -13,7 +13,7 @@ https://bringatrailer.com/listing/1994-mazda-mx-5-miata-m-edition-6/
 
 
 
-## Usage
+## Setup
 
 ```
 yarn install
@@ -31,7 +31,19 @@ touch .env
 
 Add `OPENAI_API_KEY=....` with your [OpenAI API key](https://platform.openai.com/api-keys) to your `.env` file
 
+Add the makes & models to the .env file: 
 ```
-yarn analyze.js
+MODELS=mazda/miata,porsche/boxster,ford/bronco
 ```
 
+## Usage
+
+Run for all makes and models specified
+```
+node analyze.js
+```
+
+Or, run for a specific listing
+```
+URL=https://bringatrailer.com/listing/2000-porsche-911-carrera-cabriolet-33/ price=18000 node analyze.js
+```
